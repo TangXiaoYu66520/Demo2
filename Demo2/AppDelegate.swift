@@ -7,16 +7,44 @@
 //
 
 import UIKit
+import CoreLocation
 import CoreData
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    
+//    private lazy var landscapes = Landscapes()
+    
+    func loadModel(_ models:[LandscapeModel], in context: NSManagedObjectContext) {
+        for model in models {
+            if let cityName = model.city, let type = model.type, let imageURL = model.imageURL{
+                let request = NSFetchRequest<City>(entityName: UtilityString.city)
+                request.predicate = NSPredicate(format: "name == %@ && type == %@ && imageURL == %@", cityName, type, imageURL as CVarArg)
 
-
+                if let count = try? context.count(for: request), count == 0{
+                    let city = NSEntityDescription.insertNewObject(forEntityName: UtilityString.city, into: context) as! City
+                    city.name = model.city
+                    city.type = model.type
+                    city.latitude = model.coordinate?.latitude ?? kCLLocationCoordinate2DInvalid.latitude
+                    city.longitude = model.coordinate?.longitude ?? kCLLocationCoordinate2DInvalid.longitude
+                    city.imageURL = model.imageURL
+                    city.country = Country.country(name: model.country!, context: context)
+                }
+            }
+        }
+    }
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        defer {
+            saveContext()
+        }
+        
+//        for models in landscapes.contents {
+//            loadModel(models, in: persistentContainer.viewContext)
+//        }
+        
         return true
     }
 
