@@ -15,7 +15,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     
-//    private lazy var landscapes = Landscapes()
+    private lazy var landscapes = Landscapes()
     
     func loadModel(_ models:[LandscapeModel], in context: NSManagedObjectContext) {
         for model in models {
@@ -41,9 +41,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             saveContext()
         }
         
-//        for models in landscapes.contents {
-//            loadModel(models, in: persistentContainer.viewContext)
-//        }
+        for models in landscapes.contents {
+            loadModel(models, in: persistentContainer.viewContext)
+        }
         
         return true
     }
